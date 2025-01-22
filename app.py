@@ -104,6 +104,37 @@ def get_all_active_users():
     return jsonify(user_list), 200
 
 
+@app.route('/user/update/<user_id>', methods=['PUT', 'POST'])
+def user_update(user_id):
+    user = db.session.query(Users).filter(Users.user_id == user_id).first()
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    post_data = request.json
+    if not post_data:
+        post_data = request.form
+
+    if post_data.get('first_name'):
+        user.first_name = post_data.get('first_name')
+    if post_data.get('last_name'):
+        user.last_name = post_data.get('last_name')
+    if post_data.get('email'):
+        user.email = post_data.get('email')
+    if post_data.get('phone'):
+        user.phone = post_data.get('phone')
+    if post_data.get('city'):
+        user.city = post_data.get('city')
+    if post_data.get('state'):
+        user.state = post_data.get('state')
+    if post_data.get('org_id'):
+        user.org_id = post_data.get('org_id')
+    if 'active' in post_data:
+        user.active = post_data.get('active')
+
+    db.session.commit()
+    return jsonify({'message': 'User updated successfully'}), 200
+
 # organization routes
 
 
@@ -130,6 +161,57 @@ def add_organization(name, phone, city, state, active):
 
     db.session.add(new_organization)
     db.session.commit()
+
+
+@app.route('/organization/update/<org_id>', methods=['PUT', 'POST'])
+def organization_update(org_id):
+    organization = db.session.query(Organizations).filter(
+        Organizations.org_id == org_id).first()
+    if not organization:
+        return jsonify({'message': 'Organization not found'}), 404
+
+    post_data = request.json
+    if not post_data:
+        post_data = request.form
+
+    if post_data.get('name'):
+        organization.name = post_data.get('name')
+    if post_data.get('phone'):
+        organization.phone = post_data.get('phone')
+    if post_data.get('city'):
+        organization.city = post_data.get('city')
+    if post_data.get('state'):
+        organization.state = post_data.get('state')
+    if 'active' in post_data:
+        organization.active = post_data.get('active')
+
+    db.session.commit()
+
+    return jsonify({'message': 'Organization updated successfully'}), 200
+
+
+@app.route('/organizations/get', methods=['GET'])
+def get_all_active_organizations():
+    organizations = db.session.query(Organizations).filter(
+        Organizations.active == True).all()
+    organizations = None
+    organization_list = []
+
+    for organization in organizations:
+        new_organization = {
+            'name': organization.name,
+            'phone': organization.phone,
+            'city': organization.city,
+            'state': organization.state,
+            'active': organization.active
+        }
+
+        organization_list.append(new_organization)
+
+    if organization_list:
+        return jsonify({"results": organization_list}), 200
+    else:
+        return jsonify("no organizations found"), 200
 
 
 if __name__ == '__main__':
