@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from db import db
+import marshmallow as ma
 
 
 class Organizations(db.Model):
@@ -20,3 +21,12 @@ class Organizations(db.Model):
         self.city = city
         self.state = state
         self.active = active
+
+
+class OrganizationsSchema(ma.Schema):
+    class Meta:
+        fields = ('org_id', 'name', 'phone', 'city', 'state', 'active')
+
+
+organization_schema = OrganizationsSchema()
+organizations_schema = OrganizationsSchema(many=True)

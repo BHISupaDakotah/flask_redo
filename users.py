@@ -1,6 +1,8 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from db import db
+import marshmallow as ma
+from organizations import OrganizationsSchema
 
 
 class Users(db.Model):
@@ -27,3 +29,15 @@ class Users(db.Model):
         self.state = state
         self.org_id = org_id
         self.active = active
+
+
+class UsersSchema(ma.Schema):
+    class Meta:
+        fields = ('user_id', 'first_name', 'last_name', 'email',
+                  'phone', 'city', 'state', 'organization', 'active')
+
+    organization = ma.fields.Nested(OrganizationsSchema())
+
+
+user_schema = UsersSchema()
+users_schema = UsersSchema(many=True)
