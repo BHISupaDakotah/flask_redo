@@ -15,7 +15,7 @@ class Organizations(db.Model):
     active = db.Column(db.Boolean(), default=True)
     users = db.relationship('Users', back_populates='organization', lazy=True)
 
-    def __init__(self, name, phone, city, state, active):
+    def __init__(self, name=None, phone=None, city=None, state=None, active=True):
         self.name = name
         self.phone = phone
         self.city = city

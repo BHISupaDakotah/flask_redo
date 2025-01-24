@@ -2,7 +2,7 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from db import db
 import marshmallow as ma
-from organizations import OrganizationsSchema
+from modals.organizations import OrganizationsSchema
 
 
 class Users(db.Model):
